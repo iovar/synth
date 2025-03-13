@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#000000">
-    <title>Progressive Web App</title>
+    <title>Synth</title>
     <link rel="stylesheet" href="src/styles/main.css">
     <link rel="manifest" href="manifest.json">
     <link rel="apple-touch-icon" href="public/icon-192x192.png">
@@ -21,12 +21,29 @@
 </head>
 <body>
     <div id="app">
-        <h1>Piano Keyboard</h1>
+        <h1>Synth</h1>
         <div class="controls">
-            <div class="octave-selector">
-                <button id="octave-down">-</button>
-                <span id="current-octave">4</span>
-                <button id="octave-up">+</button>
+            <div class="selectors-group">
+                <div class="octave-selector">
+                    <label for="current-octave">Octave:</label>
+                    <div class="selector-controls">
+                        <button id="octave-down">-</button>
+                        <span id="current-octave">4</span>
+                        <button id="octave-up">+</button>
+                    </div>
+                </div>
+                <div class="note-selector">
+                    <label for="start-note">Start Note:</label>
+                    <select id="start-note">
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                        <option value="G">G</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                    </select>
+                </div>
             </div>
             <div class="wave-selectors">
                 <div class="wave-selector">
@@ -49,7 +66,7 @@
                 </div>
             </div>
         </div>
-        <div class="piano-keyboard">
+        <div class="synth-keyboard">
             <div class="white-keys">
                 <div class="white-key" data-note="C">C</div>
                 <div class="white-key" data-note="D">D</div>
@@ -58,6 +75,10 @@
                 <div class="white-key" data-note="G">G</div>
                 <div class="white-key" data-note="A">A</div>
                 <div class="white-key" data-note="B">B</div>
+                <div class="white-key" data-note="C" data-octave-offset="1">C</div>
+                <div class="white-key" data-note="D" data-octave-offset="1">D</div>
+                <div class="white-key" data-note="E" data-octave-offset="1">E</div>
+                <div class="white-key" data-note="F" data-octave-offset="1">F</div>
             </div>
             <div class="black-keys">
                 <div class="black-key" data-note="C#">C#</div>
@@ -65,13 +86,22 @@
                 <div class="black-key" data-note="F#">F#</div>
                 <div class="black-key" data-note="G#">G#</div>
                 <div class="black-key" data-note="A#">A#</div>
+                <div class="black-key" data-note="C#" data-octave-offset="1">C#</div>
+                <div class="black-key" data-note="D#" data-octave-offset="1">D#</div>
             </div>
         </div>
         <div class="keyboard-info">
-            <p>Computer keyboard: A,S,D,F,G,H,J for white keys, W,E,T,Y,U for black keys</p>
-            <p>Z/X: change octave, Space: stop all sounds, Right-click: reset</p>
-            <p>Play multiple notes at once by pressing multiple keys!</p>
-            <p>Use dual synth controls to layer two different waveforms for richer sound.</p>
+            <div class="landscape-info">
+                <p>Keys: A-J (white), W,E,T,Y,U (black) | K-' (higher) | Z/X: octave | Space: stop</p>
+            </div>
+            <div class="portrait-info">
+                <p>Computer keyboard: A,S,D,F,G,H,J for base octave, K,L,;,' for higher octave</p>
+                <p>Black keys: W,E,T,Y,U (base octave) and O,P (higher octave)</p>
+                <p>Z/X: change octave, Space: stop all sounds, Right-click: reset</p>
+                <p>Start Note: Choose which white key to start the keyboard from</p>
+                <p>Play multiple notes at once by pressing multiple keys!</p>
+                <p>Use dual synth controls to layer two different waveforms for richer sound.</p>
+            </div>
         </div>
     </div>
     <script src="src/js/app.js"></script>

@@ -1,7 +1,7 @@
 {
-  "name": "Progressive Web Application",
-  "short_name": "PWA",
-  "description": "A progressive web application that works offline",
+  "name": "Synth",
+  "short_name": "Synth",
+  "description": "A dual oscillator synth that works offline",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#f5f5f5",

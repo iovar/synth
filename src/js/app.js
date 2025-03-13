@@ -1,14 +1,14 @@
 // Main application code
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Piano Keyboard initialized');
+    console.log('Synth initialized');
     
     // Prevent browser default actions that might cause scrolling
     document.addEventListener('touchmove', (e) => {
         e.preventDefault();
     }, { passive: false });
     
-    // Initialize piano keyboard
-    initPianoKeyboard();
+    // Initialize synth keyboard
+    initSynthKeyboard();
 });
 
 // Audio context and synth variables
@@ -41,7 +41,7 @@ class DualSynth {
         this.waveType1 = waveType;
         
         // Check if we need to disable oscillator 2
-        if (waveType === this.waveType2) {
+        if (waveType === this.waveType2 && this.waveType2 !== 'none') {
             this.waveType2 = 'none';
             // Update UI if needed
             const wave2Selector = document.getElementById('wave-type-2');
@@ -60,12 +60,7 @@ class DualSynth {
     
     // Set secondary oscillator wave type
     setWaveType2(waveType) {
-        // Check if this conflicts with oscillator 1
-        if (waveType !== 'none' && waveType === this.waveType1) {
-            console.warn('Oscillator 2 cannot use the same waveform as Oscillator 1');
-            return false;
-        }
-        
+        // No conflict check needed here as it's handled in the UI
         this.waveType2 = waveType;
         
         // Update all active oscillators
@@ -100,7 +95,9 @@ class DualSynth {
         
         // Set up the oscillator
         oscillator2.type = this.waveType2;
-        oscillator2.frequency.value = noteObj.oscillator1.frequency.value;
+        // Calculate the frequency using the note and octave from noteObj
+        const frequency = this.noteToFrequency(noteObj.note, noteObj.octave);
+        oscillator2.frequency.setValueAtTime(frequency, this.audioContext.currentTime);
         
         // Connect nodes
         oscillator2.connect(gainNode2);
@@ -247,8 +244,8 @@ class DualSynth {
     }
 }
 
-// Initialize piano keyboard application
-function initPianoKeyboard() {
+// Initialize synth keyboard application
+function initSynthKeyboard() {
     // Initialize dual oscillator synthesizer
     const synth = new DualSynth();
     
@@ -258,12 +255,16 @@ function initPianoKeyboard() {
     const octaveUpButton = document.getElementById('octave-up');
     const octaveDownButton = document.getElementById('octave-down');
     
+    // Start note selection
+    let startNote = 'C'; // Default start note
+    const startNoteSelector = document.getElementById('start-note');
+    
     // Wave type selectors
     const waveType1Selector = document.getElementById('wave-type-1');
     const waveType2Selector = document.getElementById('wave-type-2');
     
     // Keyboard keys
-    const pianoKeys = document.querySelectorAll('.white-key, .black-key');
+    const synthKeys = document.querySelectorAll('.white-key, .black-key');
     
     // Add event listeners to octave buttons
     octaveUpButton.addEventListener('click', () => {
@@ -285,9 +286,10 @@ function initPianoKeyboard() {
         const newType = waveType1Selector.value;
         synth.setWaveType1(newType);
         
-        // If this matches synth 2's waveform, update the UI to show "none"
+        // If this matches synth 2's waveform, update the UI to show "none" and update synth
         if (newType === waveType2Selector.value) {
             waveType2Selector.value = 'none';
+            synth.setWaveType2('none');
         }
     });
     
@@ -296,8 +298,12 @@ function initPianoKeyboard() {
         
         // Check if this is the same as synth 1
         if (newType !== 'none' && newType === waveType1Selector.value) {
-            alert('Synth 2 cannot use the same waveform as Synth 1');
+            // Set synth1 to the new type and synth2 to none
+            waveType1Selector.value = newType;
+            synth.setWaveType1(newType);
+            
             waveType2Selector.value = 'none';
+            synth.setWaveType2('none');
             return;
         }
         
@@ -309,22 +315,26 @@ function initPianoKeyboard() {
         octaveDisplay.textContent = currentOctave;
     }
     
-    // Add event listeners to piano keys
-    pianoKeys.forEach(key => {
+    // Add event listeners to synth keys
+    synthKeys.forEach(key => {
         // Mouse events
         key.addEventListener('mousedown', () => {
-            synth.playNote(key.dataset.note, currentOctave);
+            // Get the octave offset (if any)
+            const octaveOffset = key.dataset.octaveOffset ? parseInt(key.dataset.octaveOffset) : 0;
+            synth.playNote(key.dataset.note, currentOctave + octaveOffset);
             key.classList.add('active');
         });
         
         key.addEventListener('mouseup', () => {
-            synth.stopNote(key.dataset.note, currentOctave);
+            const octaveOffset = key.dataset.octaveOffset ? parseInt(key.dataset.octaveOffset) : 0;
+            synth.stopNote(key.dataset.note, currentOctave + octaveOffset);
             key.classList.remove('active');
         });
         
         key.addEventListener('mouseleave', () => {
             if (key.classList.contains('active')) {
-                synth.stopNote(key.dataset.note, currentOctave);
+                const octaveOffset = key.dataset.octaveOffset ? parseInt(key.dataset.octaveOffset) : 0;
+                synth.stopNote(key.dataset.note, currentOctave + octaveOffset);
                 key.classList.remove('active');
             }
         });
@@ -332,12 +342,14 @@ function initPianoKeyboard() {
         // Touch events for mobile
         key.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            synth.playNote(key.dataset.note, currentOctave);
+            const octaveOffset = key.dataset.octaveOffset ? parseInt(key.dataset.octaveOffset) : 0;
+            synth.playNote(key.dataset.note, currentOctave + octaveOffset);
             key.classList.add('active');
         });
         
         key.addEventListener('touchend', () => {
-            synth.stopNote(key.dataset.note, currentOctave);
+            const octaveOffset = key.dataset.octaveOffset ? parseInt(key.dataset.octaveOffset) : 0;
+            synth.stopNote(key.dataset.note, currentOctave + octaveOffset);
             key.classList.remove('active');
         });
     });
@@ -347,19 +359,62 @@ function initPianoKeyboard() {
         // Prevent repeated triggers when key is held down
         if (e.repeat) return;
         
-        // Map computer keyboard keys to piano notes
-        const keyToNote = {
-            'a': 'C', 'w': 'C#', 's': 'D', 'e': 'D#', 'd': 'E', 
-            'f': 'F', 't': 'F#', 'g': 'G', 'y': 'G#', 'h': 'A', 
-            'u': 'A#', 'j': 'B'
+        // Map computer keyboard to keyboard positions (not specific notes)
+        const keyboardMap = {
+            // Bottom row for white keys
+            'a': 0, 's': 1, 'd': 2, 'f': 3, 'g': 4, 'h': 5, 'j': 6,
+            // Top row for higher octave white keys
+            'k': 7, 'l': 8, ';': 9, '\'': 10,
+            // Middle row for black keys
+            'w': 'C#', 'e': 'D#', 't': 'F#', 'y': 'G#', 'u': 'A#',
+            'o': 'C#_hi', 'p': 'D#_hi'
         };
         
-        if (keyToNote[e.key]) {
-            const note = keyToNote[e.key];
-            const keyElement = document.querySelector(`[data-note="${note}"]`);
+        // Handle white keys by position rather than fixed note values
+        if (keyboardMap[e.key] !== undefined && typeof keyboardMap[e.key] === 'number') {
+            const keyIndex = keyboardMap[e.key];
+            const whiteKeys = document.querySelectorAll('.white-key');
+            
+            if (keyIndex < whiteKeys.length && !whiteKeys[keyIndex].classList.contains('active')) {
+                const note = whiteKeys[keyIndex].dataset.note;
+                const octaveOffset = whiteKeys[keyIndex].dataset.octaveOffset ? 
+                    parseInt(whiteKeys[keyIndex].dataset.octaveOffset) : 0;
+                
+                synth.playNote(note, currentOctave + octaveOffset);
+                whiteKeys[keyIndex].classList.add('active');
+            }
+        }
+        // Handle black keys - this is more complex as they appear in different patterns
+        else if (keyboardMap[e.key]) {
+            const blackKeyValue = keyboardMap[e.key];
+            // First five keys are in the base octave, last two are in higher octave
+            const isHigherOctave = blackKeyValue.includes('_hi');
+            const noteName = isHigherOctave ? blackKeyValue.split('_')[0] : blackKeyValue;
+            
+            // Find visible black keys with the corresponding note name
+            const blackKeys = Array.from(document.querySelectorAll('.black-key'))
+                .filter(key => key.style.visibility !== 'hidden');
+            
+            // Get appropriate black key based on position
+            let keyElement;
+            if (isHigherOctave) {
+                // Find black keys in higher octave
+                keyElement = blackKeys.find(key => 
+                    key.dataset.note === noteName && 
+                    key.hasAttribute('data-octave-offset'));
+            } else {
+                // Find base octave black keys
+                keyElement = blackKeys.find(key => 
+                    key.dataset.note === noteName && 
+                    !key.hasAttribute('data-octave-offset'));
+            }
             
             if (keyElement && !keyElement.classList.contains('active')) {
-                synth.playNote(note, currentOctave);
+                const note = keyElement.dataset.note;
+                const octaveOffset = keyElement.dataset.octaveOffset ? 
+                    parseInt(keyElement.dataset.octaveOffset) : 0;
+                
+                synth.playNote(note, currentOctave + octaveOffset);
                 keyElement.classList.add('active');
             }
         }
@@ -384,18 +439,60 @@ function initPianoKeyboard() {
     });
     
     document.addEventListener('keyup', (e) => {
-        const keyToNote = {
-            'a': 'C', 'w': 'C#', 's': 'D', 'e': 'D#', 'd': 'E', 
-            'f': 'F', 't': 'F#', 'g': 'G', 'y': 'G#', 'h': 'A', 
-            'u': 'A#', 'j': 'B'
+        // Map computer keyboard to keyboard positions (not specific notes)
+        const keyboardMap = {
+            // Bottom row for white keys
+            'a': 0, 's': 1, 'd': 2, 'f': 3, 'g': 4, 'h': 5, 'j': 6,
+            // Top row for higher octave white keys
+            'k': 7, 'l': 8, ';': 9, '\'': 10,
+            // Middle row for black keys
+            'w': 'C#', 'e': 'D#', 't': 'F#', 'y': 'G#', 'u': 'A#',
+            'o': 'C#_hi', 'p': 'D#_hi'
         };
         
-        if (keyToNote[e.key]) {
-            const note = keyToNote[e.key];
-            const keyElement = document.querySelector(`[data-note="${note}"]`);
+        // Handle white keys by position rather than fixed note values
+        if (keyboardMap[e.key] !== undefined && typeof keyboardMap[e.key] === 'number') {
+            const keyIndex = keyboardMap[e.key];
+            const whiteKeys = document.querySelectorAll('.white-key');
+            
+            if (keyIndex < whiteKeys.length) {
+                const keyElement = whiteKeys[keyIndex];
+                const note = keyElement.dataset.note;
+                const octaveOffset = keyElement.dataset.octaveOffset ? 
+                    parseInt(keyElement.dataset.octaveOffset) : 0;
+                
+                synth.stopNote(note, currentOctave + octaveOffset);
+                keyElement.classList.remove('active');
+            }
+        }
+        // Handle black keys
+        else if (keyboardMap[e.key]) {
+            const blackKeyValue = keyboardMap[e.key];
+            const isHigherOctave = blackKeyValue.includes('_hi');
+            const noteName = isHigherOctave ? blackKeyValue.split('_')[0] : blackKeyValue;
+            
+            // Find visible black keys
+            const blackKeys = Array.from(document.querySelectorAll('.black-key'))
+                .filter(key => key.style.visibility !== 'hidden');
+            
+            // Get appropriate black key based on position
+            let keyElement;
+            if (isHigherOctave) {
+                keyElement = blackKeys.find(key => 
+                    key.dataset.note === noteName && 
+                    key.hasAttribute('data-octave-offset'));
+            } else {
+                keyElement = blackKeys.find(key => 
+                    key.dataset.note === noteName && 
+                    !key.hasAttribute('data-octave-offset'));
+            }
             
             if (keyElement) {
-                synth.stopNote(note, currentOctave);
+                const note = keyElement.dataset.note;
+                const octaveOffset = keyElement.dataset.octaveOffset ? 
+                    parseInt(keyElement.dataset.octaveOffset) : 0;
+                
+                synth.stopNote(note, currentOctave + octaveOffset);
                 keyElement.classList.remove('active');
             }
         }
@@ -411,9 +508,89 @@ function initPianoKeyboard() {
         return false;
     });
     
+    // Add event listener to start note selector
+    startNoteSelector.addEventListener('change', () => {
+        startNote = startNoteSelector.value;
+        updateKeyboardNotes();
+    });
+    
+    // Function to update the keyboard based on start note
+    function updateKeyboardNotes() {
+        // Array of white notes in order
+        const whiteNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+        const blackNotes = ['C#', 'D#', 'F#', 'G#', 'A#'];
+        
+        // Find the index of the start note
+        const startIndex = whiteNotes.indexOf(startNote);
+        
+        // Update white keys
+        const whiteKeys = document.querySelectorAll('.white-key');
+        for (let i = 0; i < whiteKeys.length; i++) {
+            // Calculate the new note (with wrapping around the array)
+            const noteIndex = (startIndex + i) % 7;
+            const octaveOffset = Math.floor((startIndex + i) / 7);
+            const newNote = whiteNotes[noteIndex];
+            
+            // Update attributes and display text
+            whiteKeys[i].setAttribute('data-note', newNote);
+            if (octaveOffset > 0) {
+                whiteKeys[i].setAttribute('data-octave-offset', octaveOffset);
+                whiteKeys[i].textContent = newNote;
+            } else {
+                // Remove octave offset if it exists
+                whiteKeys[i].removeAttribute('data-octave-offset');
+                whiteKeys[i].textContent = newNote;
+            }
+        }
+        
+        // Update black keys (more complex due to irregular pattern)
+        const blackKeys = document.querySelectorAll('.black-key');
+        // Calculate if we need to show/hide black keys based on the pattern
+        
+        // Determine if black keys should be visible based on the start note
+        const hasBlackKeyAfter = (note) => {
+            return note !== 'E' && note !== 'B';
+        };
+        
+        // Hide all black keys first
+        blackKeys.forEach(key => {
+            key.style.visibility = 'hidden';
+        });
+        
+        // Then show only the appropriate ones
+        let blackKeyCount = 0;
+        for (let i = 0; i < whiteKeys.length - 1; i++) { // Last white key won't have a black key after
+            const currentNote = whiteKeys[i].getAttribute('data-note');
+            if (hasBlackKeyAfter(currentNote) && blackKeyCount < blackKeys.length) {
+                const blackKey = blackKeys[blackKeyCount];
+                const nextWhiteNote = whiteKeys[i + 1].getAttribute('data-note');
+                const blackNoteName = currentNote + '#';
+                
+                // Update position based on white key positions
+                const whiteKeyWidth = 100 / whiteKeys.length;
+                const leftPos = (i * whiteKeyWidth) + (whiteKeyWidth * 0.65);
+                blackKey.style.left = leftPos + '%';
+                
+                // Update data attributes
+                blackKey.setAttribute('data-note', blackNoteName);
+                // Copy octave offset from the white key
+                if (whiteKeys[i].hasAttribute('data-octave-offset')) {
+                    blackKey.setAttribute('data-octave-offset', whiteKeys[i].getAttribute('data-octave-offset'));
+                } else {
+                    blackKey.removeAttribute('data-octave-offset');
+                }
+                
+                blackKey.textContent = blackNoteName;
+                blackKey.style.visibility = 'visible';
+                blackKeyCount++;
+            }
+        }
+    }
+    
     // Initial setup
     synth.setWaveType1(waveType1Selector.value);
     synth.setWaveType2(waveType2Selector.value);
+    updateKeyboardNotes(); // Set up initial keyboard
     
     // Check online status
     updateOnlineStatus();
