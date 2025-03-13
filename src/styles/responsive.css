@@ -1,0 +1,192 @@
+/* Media queries for different device sizes */
+
+/* Very small screens */
+@media screen and (max-width: 360px) {
+    #app {
+        padding: 8px;
+    }
+    
+    .synth-keyboard {
+        height: 140px;
+    }
+    
+    .black-key {
+        width: 8%;
+        font-size: 0.5rem;
+        height: 60%;
+    }
+    
+    .white-key {
+        font-size: 0.5rem;
+        margin: 0;
+        padding-bottom: 5px;
+    }
+    
+    .keyboard-info {
+        font-size: 0.6rem;
+    }
+    
+    .keyboard-info p {
+        margin: 2px 0;
+    }
+    
+    .black-keys {
+        height: 60%;
+    }
+}
+
+/* Landscape mode for mobile */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    #app {
+        padding: 5px;
+        justify-content: flex-start;
+    }
+    
+    h1 {
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .controls {
+        margin-bottom: 0.5rem;
+        gap: 15px;
+        flex-wrap: nowrap;
+    }
+    
+    .selectors-group, .wave-selectors {
+        flex-direction: row;
+        gap: 10px;
+        flex-wrap: nowrap;
+    }
+    
+    .synth-keyboard {
+        height: 120px;
+        margin: 0 auto 0.5rem auto;
+        min-height: 120px; /* Ensure keyboard is always visible */
+        flex-shrink: 0; /* Prevent keyboard from shrinking */
+    }
+    
+    .keyboard-info {
+        font-size: 0.6rem;
+        margin-top: 5px;
+    }
+    
+    .keyboard-info p {
+        margin: 0;
+        line-height: 1.2;
+    }
+    
+    /* Compact form elements */
+    .octave-selector button {
+        width: 24px;
+        height: 24px;
+        font-size: 1rem;
+        margin: 0 5px;
+    }
+    
+    .wave-selector select, #start-note {
+        padding: 4px;
+        font-size: 0.8rem;
+        min-width: 0;
+        width: auto;
+    }
+    
+    .note-selector label, .octave-selector label, .wave-selector label {
+        font-size: 0.8rem;
+        min-width: auto;
+    }
+}
+
+/* Extra compact layout for very short heights in landscape */
+@media screen and (max-height: 400px) and (orientation: landscape) {
+    h1 {
+        font-size: 1rem;
+        margin-bottom: 0.3rem;
+    }
+    
+    .synth-keyboard {
+        height: 100px;
+        min-height: 100px;
+    }
+    
+    .controls {
+        margin-bottom: 0.3rem;
+    }
+    
+    body {
+        overflow-y: auto; /* Allow scrolling if needed */
+    }
+    
+    html {
+        overflow-y: auto;
+    }
+}
+
+/* Small screens */
+@media screen and (min-width: 361px) and (max-width: 480px) {
+    #app {
+        padding: 10px;
+    }
+    
+    .synth-keyboard {
+        height: 160px;
+    }
+    
+    /* Adjust black key width for small mobile */
+    .black-key {
+        width: 7%;
+        font-size: 0.6rem;
+    }
+    
+    .white-key {
+        font-size: 0.6rem;
+        margin: 0;
+    }
+    
+    .keyboard-info {
+        font-size: 0.7rem;
+    }
+    
+    .keyboard-info p {
+        margin: 3px 0;
+    }
+}
+
+/* Medium screens */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    /* Mobile-specific styles */
+    #app {
+        padding: 15px;
+    }
+    
+    .synth-keyboard {
+        height: 180px;
+    }
+    
+    /* Adjust note labels on mobile for cleaner look */
+    .white-key, .black-key {
+        font-size: 0.7rem;
+    }
+    
+    /* Responsive controls */
+    .controls {
+        gap: 15px;
+    }
+    
+    /* Adjust black key width for mobile */
+    .black-key {
+        width: 6.5%;
+    }
+}
+
+/* Larger screens */
+@media screen and (min-width: 769px) {
+    /* Desktop-specific styles */
+    #app {
+        padding: 30px;
+    }
+    
+    .synth-keyboard {
+        height: 250px;
+    }
+}

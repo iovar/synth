@@ -1,0 +1,143 @@
+/* Keyboard info */
+.keyboard-info {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    opacity: 0.7;
+    line-height: 1.5;
+}
+
+.keyboard-info p {
+    margin: 5px 0;
+}
+
+/* Show/hide info based on orientation */
+.landscape-info {
+    display: none;
+}
+
+.portrait-info {
+    display: block;
+}
+
+/* In landscape mode, show condensed info */
+@media screen and (orientation: landscape) {
+    .landscape-info {
+        display: block;
+    }
+    
+    .portrait-info {
+        display: none;
+    }
+}
+
+/* Synth keyboard */
+.synth-keyboard {
+    position: relative;
+    width: min(95%, 700px);
+    height: 200px;
+    margin: 0 auto;
+    overflow: hidden; /* Prevent keys from overflowing */
+}
+
+.white-keys {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+.white-key {
+    flex: 1;
+    background-color: white;
+    border: 1px solid #333;
+    border-radius: 0 0 5px 5px;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 10px;
+    z-index: 1;
+    cursor: pointer;
+    transition: background-color 0.1s;
+    margin: 0 1px;
+    position: relative;
+    min-width: 0; /* Prevent flex items from expanding beyond container */
+    max-width: calc(100% / 11); /* Ensure white keys are all exactly the same width */
+}
+
+.white-key:hover {
+    background-color: #f0f0f0;
+}
+
+.white-key:active, .white-key.active {
+    background-color: #e0e0e0;
+}
+
+/* Black keys container */
+.black-keys {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 65%;
+    pointer-events: none; /* Let clicks pass through to individual keys */
+    z-index: 2;
+}
+
+/* Individual black keys */
+.black-key {
+    background-color: #333;
+    border-radius: 0 0 5px 5px;
+    cursor: pointer;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 5px;
+    font-size: 0.8rem;
+    transition: background-color 0.1s;
+    position: absolute;
+    width: 6%; /* Narrower black keys to fit 11 white keys */
+    height: 100%;
+    pointer-events: auto; /* Make black keys clickable */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5); /* Add shadow for 3D effect */
+}
+
+.black-key:hover {
+    background-color: #444;
+}
+
+.black-key:active, .black-key.active {
+    background-color: #555;
+}
+
+/* Position black keys */
+/* Based on 11 white keys, with precise manual positioning */
+.black-key[data-note="C#"]:not([data-octave-offset]) {
+    left: 6%;
+}
+
+.black-key[data-note="D#"]:not([data-octave-offset]) {
+    left: 15%;
+}
+
+.black-key[data-note="F#"]:not([data-octave-offset]) {
+    left: 33%;
+}
+
+.black-key[data-note="G#"]:not([data-octave-offset]) {
+    left: 42%;
+}
+
+.black-key[data-note="A#"]:not([data-octave-offset]) {
+    left: 51%;
+}
+
+/* Next octave */
+.black-key[data-note="C#"][data-octave-offset="1"] {
+    left: 69%;
+}
+
+.black-key[data-note="D#"][data-octave-offset="1"] {
+    left: 78%;
+}
