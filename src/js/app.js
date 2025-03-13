@@ -2,6 +2,7 @@
 import { DualSynth } from './synth.js';
 import { setupKeyboard } from './keyboard.js';
 import { setupSynthControls } from './controls.js';
+import { setupEffectsControls } from './effectscontrol.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Synth initialized');
@@ -20,13 +21,15 @@ function initApp() {
     // Create the synthesizer
     const synth = new DualSynth();
     
-    // Set up keyboard and controls
+    // Set up keyboard, controls, and effects
     const keyboard = setupKeyboard(synth);
     const controls = setupSynthControls(synth);
+    const effectsControls = setupEffectsControls(synth);
     
     // Initialize components
     keyboard.init();
     controls.init();
+    effectsControls.init();
     
     // Check online status
     updateOnlineStatus();

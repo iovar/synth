@@ -1,0 +1,138 @@
+/* Effects Section Styles */
+.effects-section {
+    width: min(95%, 700px);
+    margin: 10px auto;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    text-align: left;
+}
+
+.effects-section h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #ecf0f1;
+    text-align: center;
+}
+
+/* Effect selector */
+.effect-selector {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.effect-selector label {
+    font-weight: bold;
+    min-width: 60px;
+    margin-right: 10px;
+}
+
+.effect-selector select {
+    flex: 1;
+    padding: 8px;
+    border-radius: 5px;
+    background-color: #34495e;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* Mix control */
+.mix-control {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.mix-control label {
+    font-weight: bold;
+    min-width: 60px;
+    margin-right: 10px;
+}
+
+.mix-control input[type="range"] {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.mix-value {
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Effect parameters */
+.effect-params {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.param-control {
+    display: flex;
+    align-items: center;
+}
+
+.param-control label {
+    font-weight: bold;
+    min-width: 80px;
+    margin-right: 10px;
+}
+
+.param-control input[type="range"] {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.param-control select {
+    flex: 1;
+    padding: 6px;
+    border-radius: 5px;
+    background-color: #34495e;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.param-value {
+    min-width: 60px;
+    text-align: right;
+}
+
+/* Responsive styles for effects section */
+@media screen and (max-width: 768px) {
+    .effects-section {
+        padding: 10px;
+    }
+    
+    .param-control label {
+        min-width: 70px;
+        font-size: 0.9rem;
+    }
+    
+    .param-value {
+        min-width: 45px;
+        font-size: 0.9rem;
+    }
+}
+
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    .effects-section {
+        padding: 8px;
+        margin: 5px auto;
+    }
+    
+    .effects-section h2 {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+    
+    .effect-selector, .mix-control, .param-control {
+        margin-bottom: 8px;
+    }
+    
+    .effect-params {
+        gap: 5px;
+    }
+}

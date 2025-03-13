@@ -6,6 +6,7 @@
 /* Component styles */
 @import 'controls.css';
 @import 'keyboard.css';
+@import 'effects.css';
 
 /* Responsive styles */
 @import 'responsive.css';

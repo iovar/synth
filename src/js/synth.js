@@ -3,6 +3,9 @@ let audioContext;
 let oscillator = null;
 let gainNode = null;
 
+// Import the effects processor
+import { EffectsProcessor } from './effects.js';
+
 // Dual oscillator synthesizer implementation
 class DualSynth {
     constructor() {
@@ -11,9 +14,17 @@ class DualSynth {
         this.activeNotes = {}; // Store active notes with their nodes
         this.waveType1 = 'sine'; // Default wave type for oscillator 1
         this.waveType2 = 'none'; // Default wave type for oscillator 2 (none = disabled)
+        
+        // Create master gain
         this.masterGain = this.audioContext.createGain();
         this.masterGain.gain.value = 0.7;
-        this.masterGain.connect(this.audioContext.destination);
+        
+        // Create effects processor
+        this.effectsProcessor = new EffectsProcessor(this.audioContext);
+        
+        // Connect to effects chain
+        this.masterGain.connect(this.effectsProcessor.getInput());
+        this.effectsProcessor.getOutput().connect(this.audioContext.destination);
     }
     
     // Start audio context (needed due to autoplay policy)
@@ -229,7 +240,28 @@ class DualSynth {
             }, 70);
         });
     }
+    
+    // Set the current effect
+    setEffect(effectType) {
+        this.effectsProcessor.setEffect(effectType);
+    }
+    
+    // Set effect parameter
+    setEffectParameter(paramName, value) {
+        this.effectsProcessor.setParameter(paramName, value);
+    }
+    
+    // Set the effect mix (0 = dry, 1 = wet)
+    setEffectMix(wetAmount) {
+        this.effectsProcessor.setMix(wetAmount);
+    }
+    
+    // Get the current effect parameters
+    getEffectParameters() {
+        return this.effectsProcessor.getParameters();
+    }
 }
 
 // Export the DualSynth class
+
 export { DualSynth };
