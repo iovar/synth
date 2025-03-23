@@ -39,66 +39,6 @@ function setupEffectsControls(synth) {
                     unit: 's'
                 }
             }
-        },
-        'echo': { 
-            label: 'Echo', 
-            params: { 
-                time: { 
-                    label: 'Time', 
-                    min: 0.1, 
-                    max: 0.5, 
-                    step: 0.05, 
-                    defaultValue: 0.2,
-                    unit: 's'
-                },
-                feedback: { 
-                    label: 'Feedback', 
-                    min: 0, 
-                    max: 0.9, 
-                    step: 0.05, 
-                    defaultValue: 0.4,
-                    unit: ''
-                }
-            }
-        },
-        'distortion': { 
-            label: 'Distortion', 
-            params: { 
-                amount: { 
-                    label: 'Amount', 
-                    min: 1, 
-                    max: 100, 
-                    step: 1, 
-                    defaultValue: 20,
-                    unit: ''
-                }
-            }
-        },
-        'filter': { 
-            label: 'Filter', 
-            params: { 
-                frequency: { 
-                    label: 'Cutoff', 
-                    min: 100, 
-                    max: 5000, 
-                    step: 50, 
-                    defaultValue: 800,
-                    unit: 'Hz'
-                },
-                resonance: { 
-                    label: 'Resonance', 
-                    min: 0.1, 
-                    max: 20, 
-                    step: 0.5, 
-                    defaultValue: 1,
-                    unit: ''
-                },
-                type: { 
-                    label: 'Type', 
-                    options: ['lowpass', 'highpass', 'bandpass', 'notch'],
-                    defaultValue: 'lowpass'
-                }
-            }
         }
     };
     

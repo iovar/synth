@@ -10,7 +10,7 @@
     <link rel="apple-touch-icon" href="public/icon-192x192.png">
     <script>
         // Register service worker for offline functionality
-        if ('serviceWorker' in navigator) {
+        if ('serviceWorker' in navigator && location.protocol === 'https:') {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('service-worker.js')
                     .then(reg => console.log('Service worker registered'))
@@ -65,6 +65,7 @@
                     </select>
                 </div>
             </div>
+            <button id="stop-all-button" class="stop-all-button">STOP ALL SOUNDS</button>
         </div>
         <div class="synth-keyboard">
             <div class="white-keys">
@@ -93,7 +94,7 @@
         <div id="effects-section" class="effects-section">
             <!-- Effects controls will be added here dynamically -->
         </div>
-        
+
         <div class="keyboard-info">
             <div class="landscape-info">
                 <p>Keys: A-J (white), W,E,T,Y,U (black) | K-' (higher) | Z/X: octave | Space: stop</p>

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'synth-cache-v1';
+const CACHE_NAME = 'synth-cache-v2';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -7,6 +7,14 @@ const ASSETS_TO_CACHE = [
   '/manifest.json'
   // Add other resources that need to be available offline
 ];
+
+// manual cache busting
+self.addEventListener('message', event => {
+    if (event.data.action === 'clearCache') {
+        console.log('Clearing cache');
+        caches.delete(CACHE_NAME);
+    }
+});
 
 // Install service worker and cache all assets
 self.addEventListener('install', event => {
@@ -45,28 +53,28 @@ self.addEventListener('fetch', event => {
         if (response) {
           return response;
         }
-        
+
         // Clone the request
         const fetchRequest = event.request.clone();
-        
+
         // Make network request and cache the response
         return fetch(fetchRequest).then(response => {
           // Check if we received a valid response
           if (!response || response.status !== 200 || response.type !== 'basic') {
             return response;
           }
-          
+
           // Clone the response
           const responseToCache = response.clone();
-          
+
           caches.open(CACHE_NAME)
             .then(cache => {
               cache.put(event.request, responseToCache);
             });
-            
+
           return response;
         }).catch(() => {
-          // If network request fails and resource is not in cache, 
+          // If network request fails and resource is not in cache,
           // you could return a custom offline page here
         });
       })

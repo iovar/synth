@@ -6,12 +6,12 @@ import { setupEffectsControls } from './effectscontrol.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Synth initialized');
-    
+
     // Prevent browser default actions that might cause scrolling
     document.addEventListener('touchmove', (e) => {
         e.preventDefault();
     }, { passive: false });
-    
+
     // Initialize application
     initApp();
 });
@@ -20,17 +20,29 @@ document.addEventListener('DOMContentLoaded', () => {
 function initApp() {
     // Create the synthesizer
     const synth = new DualSynth();
-    
+
     // Set up keyboard, controls, and effects
     const keyboard = setupKeyboard(synth);
     const controls = setupSynthControls(synth);
     const effectsControls = setupEffectsControls(synth);
-    
+
     // Initialize components
     keyboard.init();
     controls.init();
     effectsControls.init();
-    
+
+    // Set up stop all sounds button
+    const stopAllButton = document.getElementById('stop-all-button');
+    if (stopAllButton) {
+        stopAllButton.addEventListener('click', () => {
+            synth.stopAllNotes();
+            // Remove active class from all keys
+            document.querySelectorAll('.white-key.active, .black-key.active').forEach(key => {
+                key.classList.remove('active');
+            });
+        });
+    }
+
     // Check online status
     updateOnlineStatus();
     window.addEventListener('online', updateOnlineStatus);
@@ -42,3 +54,11 @@ function updateOnlineStatus() {
     const isOnline = navigator.onLine;
     console.log(`App is ${isOnline ? 'online' : 'offline'}`);
 }
+
+function clearServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.controller.postMessage({ action: 'clearCache' });
+    }
+}
+window.clearServiceWorker = clearServiceWorker;
+
