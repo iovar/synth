@@ -3,6 +3,7 @@ import { DualSynth } from './synth.js';
 import { setupKeyboard } from './keyboard.js';
 import { setupSynthControls } from './controls.js';
 import { setupEffectsControls } from './effectscontrol.js';
+import { AudioRecorder } from './recorder.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('Synth initialized');
@@ -25,6 +26,9 @@ function initApp() {
     const keyboard = setupKeyboard(synth);
     const controls = setupSynthControls(synth);
     const effectsControls = setupEffectsControls(synth);
+
+    // Create audio recorder - connect it to the synth's output
+    const recorder = new AudioRecorder(synth.audioContext, synth.masterGain);
 
     // Initialize components
     keyboard.init();
@@ -110,13 +114,53 @@ function initApp() {
                 emergencyStopActivated = true;
                 stopAllButton.click();
             }
+        });
+    }
 
-            // Space bar also stops sound (as documented in the UI)
-            if (e.key === ' ' && !e.repeat) {
-                synth.stopAllNotes();
-                document.querySelectorAll('.white-key.active, .black-key.active').forEach(key => {
-                    key.classList.remove('active');
-                });
+    // Set up record button
+    const recordButton = document.getElementById('record-button');
+    if (recordButton) {
+        let isRecording = false;
+
+        // Initialize recorder when user clicks the button for the first time
+        recordButton.addEventListener('click', async () => {
+            try {
+                // Toggle recording state
+                if (!isRecording) {
+                    // Start recording
+                    await recorder.startRecording();
+                    isRecording = true;
+                    recordButton.classList.add('recording');
+                    recordButton.textContent = 'STOP';
+
+                    // Show notification
+                    console.log('Recording started');
+                } else {
+                    // Stop recording
+                    recorder.stopRecording();
+                    isRecording = false;
+                    recordButton.classList.remove('recording');
+                    recordButton.textContent = 'REC';
+
+                    // Show notification
+                    console.log('Recording stopped, saving file...');
+                }
+            } catch (error) {
+                console.error('Recording error:', error);
+                alert('Recording error: ' + error.message);
+
+                // Reset UI if there was an error
+                isRecording = false;
+                recordButton.classList.remove('recording');
+                recordButton.textContent = 'REC';
+            }
+        });
+
+        // Space key as shortcut for record toggle (when not playing notes)
+        document.addEventListener('keydown', (e) => {
+            // Toggle recording with space bar when not used for playing
+            if (e.key === ' ' && e.target === document.body) {
+                recordButton.click();
             }
         });
     }

@@ -145,6 +145,18 @@
     }
 }
 
+@keyframes pulse-green {
+    0% {
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(46, 204, 113, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+    }
+}
+
 /* Stop All Sounds Button */
 .stop-all-button {
     background-color: #e74c3c;
@@ -154,7 +166,6 @@
     padding: 12px 24px;
     border: none;
     border-radius: 4px;
-    align-self: center;
     width: 70px;
     height: 70px;
     cursor: pointer;
@@ -178,5 +189,46 @@
     background-color: #a93226;
     transform: scale(0.95);
     animation: pulse-red 0.5s 1;
+}
+
+/* Record Button */
+.record-button {
+    background-color: #2ecc71;
+    color: white;
+    font-size: .8rem;
+    font-weight: bold;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    width: 70px;
+    height: 70px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    position: relative;
+}
+
+.record-button:hover {
+    background-color: #27ae60;
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.record-button:active {
+    background-color: #219653;
+    transform: scale(0.95);
+}
+
+.record-button.recording {
+    background-color: #e74c3c;
+    animation: pulse-red 1.5s infinite;
+}
+
+.record-button.recording:hover {
+    background-color: #c0392b;
 }
 
