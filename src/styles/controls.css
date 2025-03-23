@@ -133,6 +133,18 @@
     box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.5);
 }
 
+@keyframes pulse-red {
+    0% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 15px rgba(231, 76, 60, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(231, 76, 60, 0);
+    }
+}
+
 /* Stop All Sounds Button */
 .stop-all-button {
     background-color: #e74c3c;
@@ -143,7 +155,8 @@
     border: none;
     border-radius: 4px;
     align-self: center;
-    max-width: 80px;
+    width: 70px;
+    height: 70px;
     cursor: pointer;
     transition: all 0.2s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
@@ -151,15 +164,19 @@
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
+    position: relative;
 }
 
 .stop-all-button:hover {
     background-color: #c0392b;
     transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
-.stop-all-button:active {
+.stop-all-button:active,
+.stop-all-button.active {
     background-color: #a93226;
     transform: scale(0.95);
+    animation: pulse-red 0.5s 1;
 }
 
